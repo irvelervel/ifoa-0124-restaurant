@@ -4,11 +4,14 @@ import './App.css'
 // visualizzati correttamente
 import 'bootstrap/dist/css/bootstrap.min.css'
 import RestaurantNavbar from './components/RestaurantNavbar'
+import HomeCarousel from './components/HomeCarousel'
 
 function App() {
   return (
     <div>
       <RestaurantNavbar subtitle="Le migliori paste del web!" />
+      {/* parte centrale, carosello con le pastasciutte */}
+      <HomeCarousel />
     </div>
   )
 }
