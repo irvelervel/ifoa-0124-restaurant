@@ -36,7 +36,7 @@ class HomeCarousel extends Component {
         <h2 className="my-3 text-center">Ecco il nostro menù!</h2>
         <Carousel
           onSlide={(newSlideIndex) => {
-            console.log('SLIDE CAMBIATA!', newSlideIndex)
+            // console.log('SLIDE CAMBIATA!', newSlideIndex)
             // questo è un event listener che ascolta i cambi di slide e riporta il nuovo indice corrente
             // ora devo cambiare la selectedPasta
             this.setState({

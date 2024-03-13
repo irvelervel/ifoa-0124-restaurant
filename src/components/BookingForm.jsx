@@ -12,6 +12,15 @@ import Alert from 'react-bootstrap/Alert'
 // smoking: boolean <-- required
 // specialRequests <-- NOT required
 
+const initialReservation = {
+  name: '',
+  phone: '',
+  numberOfPeople: 1,
+  dateTime: '',
+  smoking: false,
+  specialRequests: '',
+}
+
 class BookingForm extends Component {
   // creo un sotto-oggetto nello state di BookingForm, che rappresenterà il CONTENUTO del form di prenotazione
   // grazie ad una serie di input "controllati", ad ogni pressione di un tasto in un campo noi andremo a modificare
@@ -21,21 +30,52 @@ class BookingForm extends Component {
   // stato automaticamente aggiornato strada facendo
 
   state = {
-    reservation: {
-      name: '',
-      phone: '',
-      numberOfPeople: 1,
-      dateTime: '',
-      smoking: false,
-      specialRequests: '',
-    },
+    reservation: initialReservation,
+    // ho descritto i valori iniziali di reservation in una costante a parte,
+    // in modo da non dover fare copia/incolla degli stessi dati quando avrò bisogno di
+    // resettare il form una volta inviato correttamente
+    // D R Y (don't repeat yourself)
   }
 
   render() {
     return (
       <>
         <h2 className="text-center mt-3">Prenota un tavolo ORA!</h2>
-        <Form>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault() // fermiamo il comportamento di default del browser
+            // facciamo la raccolta dati...
+            // scherzo! l'abbiamo già fatta, è il contenuto del nostro stato!
+            fetch('https://striveschool-api.herokuapp.com/api/reservation', {
+              method: 'POST', // uso POST per creare una nuova risorsa
+              body: JSON.stringify(this.state.reservation),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+              .then((res) => {
+                // finirete qui dentro se la Promise viene risolta!
+                // la res rappresenta la Response da parte del server
+                console.log('RES', res)
+                if (res.ok) {
+                  // la prenotazione è stata salvata correttamente!
+                  window.alert('Prenotazione salvata! Grazie!')
+                  // bello, ma il form è ancora pieno! svuotiamolo:
+                  this.setState({
+                    reservation: initialReservation, // riassegno reservation al valore iniziale
+                  })
+                } else {
+                  // ahia! c'è stato un problema
+                  window.alert('Errore, riprova più tardi!')
+                  throw new Error('Errore nel salvataggio della prenotazione')
+                }
+              })
+              .catch((err) => {
+                // finirete qui dentro se la Promise viene rifiutata!
+                console.log('ERRORE!', err)
+              })
+          }}
+        >
           <Form.Group className="mb-3">
             <Form.Label>Il tuo nome</Form.Label>
             {/* i Form.Control si traducono in HTML in <input /> */}
