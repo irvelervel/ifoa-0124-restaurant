@@ -1,7 +1,4 @@
 import Carousel from 'react-bootstrap/Carousel'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import ListGroup from 'react-bootstrap/ListGroup'
 // recupero l'array delle pastasciutte con un import
 import items from '../data/menu.json'
@@ -35,63 +32,56 @@ class HomeCarousel extends Component {
 
   render() {
     return (
-      <Container>
-        <Row className="justify-content-center">
-          <Col xs={12} md={8} lg={6}>
-            {/* <div class="col-12 col-md-8 col-lg-6"> */}
-            <h2 className="my-3 text-center">Ecco il nostro menù!</h2>
-            <Carousel
-              onSlide={(newSlideIndex) => {
-                console.log('SLIDE CAMBIATA!', newSlideIndex)
-                // questo è un event listener che ascolta i cambi di slide e riporta il nuovo indice corrente
-                // ora devo cambiare la selectedPasta
-                this.setState({
-                  // nuovo contenuto dello stato
-                  selectedPasta: items[newSlideIndex],
-                  // abbiamo appena aggiornato lo stato ad ogni cambio di slide
-                })
-              }}
-            >
-              {
-                // con queste graffe dichiaro un "blocco logico" in JSX, una "parte dinamica"
-                // con .map() andiamo a mappare un array e a generare dinamicamente del contenuto,
-                // ritornando in questo caso un Carousel.Item per ogni pasta nell'array items (menu.json)
-                items.map((pasta, i) => {
-                  return (
-                    // la key è una prop univoca che dev'essere assegnata ad ogni elemento che ritornate da un .map()
-                    // serve a React per mantenere ottimali le performance durante le sua interne manipolazioni del DOM
-                    <Carousel.Item key={pasta.id}>
-                      <img
-                        src={pasta.image}
-                        alt="a pasta from the menu"
-                        className="w-100"
-                      />
-                      <Carousel.Caption>
-                        <h3>{pasta.name}</h3>
-                        <p>{pasta.description}</p>
-                      </Carousel.Caption>
-                    </Carousel.Item>
-                  )
-                })
-              }
-            </Carousel>
-          </Col>
-        </Row>
-        <Row className="justify-content-center">
-          <Col xs={12} md={8} lg={6}>
-            <ListGroup className="text-center">
-              {this.state.selectedPasta.comments.map((review) => {
-                return (
-                  <ListGroup.Item key={review.id}>
-                    {review.rating} | {review.comment}
-                  </ListGroup.Item>
-                )
-              })}
-              {/* per aggiornare la sezione commenti, dobbiamo semplicemente cambiare la selectedPasta */}
-            </ListGroup>
-          </Col>
-        </Row>
-      </Container>
+      <>
+        <h2 className="my-3 text-center">Ecco il nostro menù!</h2>
+        <Carousel
+          onSlide={(newSlideIndex) => {
+            console.log('SLIDE CAMBIATA!', newSlideIndex)
+            // questo è un event listener che ascolta i cambi di slide e riporta il nuovo indice corrente
+            // ora devo cambiare la selectedPasta
+            this.setState({
+              // nuovo contenuto dello stato
+              selectedPasta: items[newSlideIndex],
+              // abbiamo appena aggiornato lo stato ad ogni cambio di slide
+            })
+
+            // this.state.selectedPasta = qualcos'altro <-- VIETATO
+          }}
+        >
+          {
+            // con queste graffe dichiaro un "blocco logico" in JSX, una "parte dinamica"
+            // con .map() andiamo a mappare un array e a generare dinamicamente del contenuto,
+            // ritornando in questo caso un Carousel.Item per ogni pasta nell'array items (menu.json)
+            items.map((pasta, i) => {
+              return (
+                // la key è una prop univoca che dev'essere assegnata ad ogni elemento che ritornate da un .map()
+                // serve a React per mantenere ottimali le performance durante le sua interne manipolazioni del DOM
+                <Carousel.Item key={pasta.id}>
+                  <img
+                    src={pasta.image}
+                    alt="a pasta from the menu"
+                    className="w-100"
+                  />
+                  <Carousel.Caption>
+                    <h3>{pasta.name}</h3>
+                    <p>{pasta.description}</p>
+                  </Carousel.Caption>
+                </Carousel.Item>
+              )
+            })
+          }
+        </Carousel>
+        <ListGroup className="text-center">
+          {this.state.selectedPasta.comments.map((review) => {
+            return (
+              <ListGroup.Item key={review.id}>
+                {review.rating} | {review.comment}
+              </ListGroup.Item>
+            )
+          })}
+          {/* per aggiornare la sezione commenti, dobbiamo semplicemente cambiare la selectedPasta */}
+        </ListGroup>
+      </>
     )
   }
 }
