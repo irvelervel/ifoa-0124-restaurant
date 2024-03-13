@@ -37,45 +37,77 @@ class BookingForm extends Component {
     // D R Y (don't repeat yourself)
   }
 
+  handleSubmitThenCatch = (e) => {
+    e.preventDefault() // fermiamo il comportamento di default del browser
+    // facciamo la raccolta dati...
+    // scherzo! l'abbiamo già fatta, è il contenuto del nostro stato!
+    fetch('https://striveschool-api.herokuapp.com/api/reservation', {
+      method: 'POST', // uso POST per creare una nuova risorsa
+      body: JSON.stringify(this.state.reservation),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        // finirete qui dentro se la Promise viene risolta!
+        // la res rappresenta la Response da parte del server
+        console.log('RES', res)
+        if (res.ok) {
+          // la prenotazione è stata salvata correttamente!
+          window.alert('Prenotazione salvata! Grazie!')
+          // bello, ma il form è ancora pieno! svuotiamolo:
+          this.setState({
+            reservation: initialReservation, // riassegno reservation al valore iniziale
+          })
+        } else {
+          // ahia! c'è stato un problema
+          window.alert('Errore, riprova più tardi!')
+          throw new Error('Errore nel salvataggio della prenotazione')
+          // mi auto lancio nel blocco catch
+        }
+      })
+      .catch((err) => {
+        // finirete qui dentro se la Promise viene rifiutata!
+        console.log('ERRORE!', err)
+      })
+  }
+
+  handleSubmitAsyncAwait = async (e) => {
+    e.preventDefault() // fermiamo il comportamento di default
+    // le Promise vanno ATTESE, sia nel caso di Resolved sia nel caso di Rejected
+    try {
+      const res = await fetch(
+        'https://striveschool-api.herokuapp.com/api/reservation',
+        {
+          method: 'POST', // uso POST per creare una nuova risorsa
+          body: JSON.stringify(this.state.reservation),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      if (res.ok) {
+        window.alert('Prenotazione salvata! Grazie!')
+        // bello, ma il form è ancora pieno! svuotiamolo:
+        this.setState({
+          reservation: initialReservation, // riassegno reservation al valore iniziale
+        })
+      } else {
+        // ahia! c'è stato un problema
+        window.alert('Errore, riprova più tardi!')
+        throw new Error('Errore nel salvataggio della prenotazione')
+        // mi auto lancio nel blocco catch
+      }
+    } catch (err) {
+      console.log('ERRORE!', err)
+    }
+  }
+
   render() {
     return (
       <>
         <h2 className="text-center mt-3">Prenota un tavolo ORA!</h2>
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault() // fermiamo il comportamento di default del browser
-            // facciamo la raccolta dati...
-            // scherzo! l'abbiamo già fatta, è il contenuto del nostro stato!
-            fetch('https://striveschool-api.herokuapp.com/api/reservation', {
-              method: 'POST', // uso POST per creare una nuova risorsa
-              body: JSON.stringify(this.state.reservation),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-              .then((res) => {
-                // finirete qui dentro se la Promise viene risolta!
-                // la res rappresenta la Response da parte del server
-                console.log('RES', res)
-                if (res.ok) {
-                  // la prenotazione è stata salvata correttamente!
-                  window.alert('Prenotazione salvata! Grazie!')
-                  // bello, ma il form è ancora pieno! svuotiamolo:
-                  this.setState({
-                    reservation: initialReservation, // riassegno reservation al valore iniziale
-                  })
-                } else {
-                  // ahia! c'è stato un problema
-                  window.alert('Errore, riprova più tardi!')
-                  throw new Error('Errore nel salvataggio della prenotazione')
-                }
-              })
-              .catch((err) => {
-                // finirete qui dentro se la Promise viene rifiutata!
-                console.log('ERRORE!', err)
-              })
-          }}
-        >
+        <Form onSubmit={this.handleSubmitAsyncAwait}>
           <Form.Group className="mb-3">
             <Form.Label>Il tuo nome</Form.Label>
             {/* i Form.Control si traducono in HTML in <input /> */}
