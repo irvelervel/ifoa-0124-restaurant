@@ -1,5 +1,7 @@
 import { Component } from 'react'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Spinner from 'react-bootstrap/Spinner'
+import Alert from 'react-bootstrap/Alert'
 
 // FLUSSO DI EVENTI IN BOOKINGLIST
 // 1) Lo stato del componente viene settato ad array vuoto (this.state.reservations)
@@ -34,6 +36,8 @@ class BookingList extends Component {
   state = {
     reservations: [], // al fine di non snaturare questa fonte di dati, il tipo di questa proprietà sarà SEMPRE
     // un array; poichè però le prenotazioni all'avvio ancora non ci sono, il suo valore sarà di array -vuoto-
+    isLoading: true,
+    isError: false,
   }
 
   fetchBookings = () => {
@@ -56,11 +60,16 @@ class BookingList extends Component {
         // qua tra poco le salveremo anche nello state...
         this.setState({
           reservations: reservationsFromAPI,
+          isLoading: false,
         })
         // OGNI VOLTA che viene eseguito un this.setState(), il metodo render() viene invocato di nuovo!
       })
       .catch((error) => {
         console.log('ERRORE', error)
+        this.setState({
+          isLoading: false,
+          isError: true,
+        })
       })
   }
 
@@ -90,10 +99,24 @@ class BookingList extends Component {
             se la lunghezza dell'array reservations è esattamente ZERO */}
           {/* questo operatore && in gergo si chiama SHORT-CIRCUIT */}
 
-          {this.state.reservations.length === 0 && (
-            <ListGroup.Item>
-              Al momento non ci sono prenotazioni 🙁
-            </ListGroup.Item>
+          {this.state.reservations.length === 0 &&
+            this.state.isLoading === false &&
+            this.state.isError === false && (
+              <ListGroup.Item>
+                Al momento non ci sono prenotazioni 🙁
+              </ListGroup.Item>
+            )}
+
+          {this.state.isLoading === true && (
+            <div>
+              <Spinner animation="border" variant="success" />
+            </div>
+          )}
+
+          {this.state.isError === true && (
+            <div>
+              <Alert variant="danger">Qualcosa è andato storto 🙁</Alert>
+            </div>
           )}
 
           {this.state.reservations.map((reservation) => {
