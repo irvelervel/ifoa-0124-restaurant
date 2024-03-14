@@ -9,6 +9,7 @@ import BookingForm from './components/BookingForm'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import BookingList from './components/BookingList'
 
 function App() {
   return (
@@ -19,6 +20,11 @@ function App() {
       {/* al momento non ho modo di separare le "pagine" dell'app, metto tutto in App.js */}
 
       <Container>
+        <Row className="justify-content-center">
+          <Col xs={12} md={8} lg={6}>
+            <BookingList />
+          </Col>
+        </Row>
         <Row className="justify-content-center">
           <Col xs={12} md={8} lg={6}>
             <BookingForm />
